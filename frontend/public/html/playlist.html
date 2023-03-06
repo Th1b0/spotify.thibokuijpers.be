@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Playlist Tracks</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <style>
+      @import url("https://fonts.cdnfonts.com/css/circular-std");
+      body {
+        font-family: "Circular Std", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 30px;
+      }
+      p {
+        text-align: center;
+      }
+      .owner_name {
+        font-size: 1rem;
+      }
+      #tracks-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .track {
+        width: 225px;
+        margin: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      .track img {
+        width: 100%;
+        height: auto;
+      }
+
+      .track-info {
+        padding: 10px;
+      }
+
+      .track-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .track-artist {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .track-duration {
+        font-size: 14px;
+      }
+      .loading {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .loading::before {
+        content: "";
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 10px solid #ccc;
+        border-top-color: #333;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+
+    <h1 id="title-name"></h1>
+    <p id="owner_name"></p>
+    <div id="tracks-container"></div>
+  </body>
+  <script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const playlistId = urlParams.get("id");
+    const playlist_name = urlParams.get("name");
+    const playlist_owner = urlParams.get("owner");
+
+    const playlist_title = document.getElementById("title-name");
+    playlist_title.innerText = playlist_name;
+    const playlist_maker = document.getElementById("owner_name");
+    playlist_maker.innerText = playlist_owner;
+    async function getTracks(playlistId) {
+      const TRACKS_API_URL = ` /api/playlist/${playlistId}/tracks`;
+      const tracksContainer = document.getElementById("tracks-container");
+      const loadingElement = document.createElement("div");
+      loadingElement.className = "loading";
+      tracksContainer.appendChild(loadingElement);
+
+      try {
+        const response = await fetch(TRACKS_API_URL);
+        const tracks = await response.json();
+        renderTracks(tracks);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        tracksContainer.removeChild(loadingElement);
+      }
+    }
+
+    function renderTracks(tracks) {
+      const tracksContainer = document.getElementById("tracks-container");
+
+      tracks.forEach((track) => {
+        const trackElement = createTrackElement(track);
+        tracksContainer.appendChild(trackElement);
+      });
+    }
+
+    function createTrackElement(track) {
+      const trackElement = document.createElement("div");
+      trackElement.className = "track";
+
+      const coverImage = document.createElement("img");
+      coverImage.src = track.cover;
+      trackElement.appendChild(coverImage);
+
+      const trackInfo = document.createElement("div");
+      trackInfo.className = "track-info";
+
+      const trackName = document.createElement("div");
+      trackName.className = "track-name";
+      trackName.textContent = track.name;
+      trackInfo.appendChild(trackName);
+
+      const trackArtist = document.createElement("div");
+      trackArtist.className = "track-artist";
+      trackArtist.textContent = track.artist;
+      trackInfo.appendChild(trackArtist);
+
+      const trackDuration = document.createElement("div");
+      trackDuration.className = "track-duration";
+      trackDuration.textContent = formatDuration(track.duration);
+      trackInfo.appendChild(trackDuration);
+
+      trackElement.appendChild(trackInfo);
+
+      return trackElement;
+    }
+
+    function formatDuration(duration) {
+      const minutes = Math.floor(duration / 60000);
+      const seconds = Math.floor((duration % 60000) / 1000);
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+
+    getTracks(playlistId);
+  </script>
+</html>

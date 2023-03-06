@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+  </head>
+  <style>
+    @import url("https://fonts.cdnfonts.com/css/circular-std");
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: "Circular Std", sans-serif;
+    }
+    .user_profile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .user_pic {
+      width: 70%;
+      border-radius: 15px;
+    }
+    .user_playlists {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 4rem;
+      margin-inline: 1rem;
+    }
+    .item_container {
+      width: 12rem;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      overflow: hidden;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .item_container:hover {
+      transform: scale(1.02);
+    }
+    .playlist_cover {
+      width: 100%;
+      height: auto;
+    }
+    .playlist_name {
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+    .playlist_owner {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+    }
+  </style>
+  <body>
+    <script>
+      async function getProfile() {
+        const profile_URL = "/api/auth";
+        const response = await fetch(profile_URL);
+        const profile = await response.json();
+        renderProfile(profile);
+      }
+      async function renderProfile(profile) {
+        const user_profile = document.createElement("div");
+        user_profile.className = "user_profile";
+        const user_pic = document.createElement("img");
+        user_pic.src = profile.images[0].url;
+        user_pic.className = "user_pic";
+        const user_greeting = document.createElement("h1");
+        user_greeting.className = "user_greeting";
+        user_greeting.innerText = "Welkom " + profile.display_name + "!";
+        user_profile.appendChild(user_pic);
+        user_profile.appendChild(user_greeting);
+        document.body.appendChild(user_profile);
+      }
+      async function getPlaylists() {
+        const profile_URL = "/api/playlist";
+        const response = await fetch(profile_URL);
+        const playlists = await response.json();
+        renderPlaylists(playlists);
+      }
+      async function renderPlaylists(playlists) {
+        const user_playlists = document.createElement("div");
+        user_playlists.className = "user_playlists";
+        playlists.forEach((i, v) => {
+          const playlists_container = document.createElement("div");
+          playlists_container.className = "item_container";
+          playlists_container.onclick = function () {
+            location.href = `/user/playlists?id=${i.playlist.id}&name=${i.playlist.name}&owner=${i.playlist.owner.display_name}`;
+          };
+          const playlist_cover = document.createElement("img");
+          playlist_cover.className = "playlist_cover";
+          playlist_cover.src = i.playlist.cover;
+          const playlist_name = document.createElement("p");
+          playlist_name.className = "playlist_name";
+          playlist_name.innerText = i.playlist.name;
+          const playlist_owner = document.createElement("p");
+          playlist_owner.className = "playlist_owner";
+          playlist_owner.innerText = i.playlist.owner.display_name;
+
+          playlists_container.appendChild(playlist_cover);
+          playlists_container.appendChild(playlist_name);
+          playlists_container.appendChild(playlist_owner);
+          user_playlists.appendChild(playlists_container);
+        });
+        document.body.appendChild(user_playlists);
+      }
+      getProfile();
+      getPlaylists();
+    </script>
+  </body>
+</html>
