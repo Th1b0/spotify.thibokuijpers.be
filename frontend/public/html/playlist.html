@@ -1,9 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Playlist Tracks</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+      integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
+      integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </head>
   <body>
     <style>
@@ -12,17 +26,29 @@
         font-family: "Circular Std", sans-serif;
         margin: 0;
         padding: 0;
+        background-color: rgba(0, 0, 0,1.5);
+        overflow-x: hidden;
       }
 
       h1 {
         text-align: center;
         margin-top: 30px;
+        color: white;
+        margin-right: 200px;
       }
       p {
         text-align: center;
+        color: white;
+        margin-right: 200px;
       }
       .owner_name {
         font-size: 1rem;
+
+      }
+      #content {
+        margin-left: 200px;
+
+        margin-bottom: 150px;
       }
       #tracks-container {
         display: flex;
@@ -32,11 +58,17 @@
       }
 
       .track {
-        width: 225px;
+        width: 175px;
         margin: 20px;
         border: 1px solid #ccc;
+        background-color: white;
         border-radius: 5px;
         overflow: hidden;
+        transition: 0.15s;
+        cursor: pointer;
+      }
+      .track:hover {
+        transform: scale(1.05);
       }
 
       .track img {
@@ -49,18 +81,18 @@
       }
 
       .track-name {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
         margin-bottom: 5px;
       }
 
       .track-artist {
-        font-size: 16px;
+        font-size: 10px;
         margin-bottom: 10px;
       }
 
       .track-duration {
-        font-size: 14px;
+        font-size: 12px;
       }
       .loading {
         display: flex;
@@ -85,86 +117,241 @@
         }
       }
     </style>
-
-    <h1 id="title-name"></h1>
-    <p id="owner_name"></p>
-    <div id="tracks-container"></div>
-  </body>
-  <script>
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const playlistId = urlParams.get("id");
-    const playlist_name = urlParams.get("name");
-    const playlist_owner = urlParams.get("owner");
-
-    const playlist_title = document.getElementById("title-name");
-    playlist_title.innerText = playlist_name;
-    const playlist_maker = document.getElementById("owner_name");
-    playlist_maker.innerText = playlist_owner;
-    async function getTracks(playlistId) {
-      const TRACKS_API_URL = ` /api/playlist/${playlistId}/tracks`;
-      const tracksContainer = document.getElementById("tracks-container");
-      const loadingElement = document.createElement("div");
-      loadingElement.className = "loading";
-      tracksContainer.appendChild(loadingElement);
-
-      try {
-        const response = await fetch(TRACKS_API_URL);
-        const tracks = await response.json();
-        renderTracks(tracks);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        tracksContainer.removeChild(loadingElement);
+    <div class="sidebar">
+      <ul id="sidebar_items">
+        <li>
+          <a style="font-weight: bold; color: white" href="/user/profile"
+            >Home</a
+          >
+        </li>
+        <li><a href="/user/profile">Search</a></li>
+        <li><a href="/library">Library</a></li>
+        <hr />
+      </ul>
+    </div>
+    <div id="content">
+      <h1 id="title-name"></h1>
+      <p id="owner_name"></p>
+      <div id="tracks-container"></div>
+    </div>
+    <style>
+      body {
+        background-color: #0d0d0d;
       }
-    }
+      .player {
+        background-color: black;
+        color: white;
+        position: fixed;
+        bottom: 0;
+        width: 100vw;
+      }
+      .player_cover {
+        width: 100px;
+        height: 100px;
+      }
+      .player_items {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-block: 15px;
+      }
+      .meta_data {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .player_song {
+        width: 600px;
+        height: 25px;
+        text-align: left;
+        margin: 0;
+      }
+      .artist_label {
+        margin: 0;
+        font-weight: bolder;
+        margin-bottom: 20px;
+      }
+      .player_artist {
+        font-weight: 400;
+        font-style: normal;
+      }
+      .control_bar {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 4rem;
+      }
+      .playBtn {
+        background-color: black;
+        border: none;
+        font-size: 1.25rem;
+        color: white;
+        margin-inline: 0;
+        width: 25px;
+        
+      }
 
-    function renderTracks(tracks) {
-      const tracksContainer = document.getElementById("tracks-container");
+.times {
+  display: flex;
+}
+.seek_slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: white;
+  opacity: 0.7;
+}
+.seek_slider::-moz-range-thumb {
+  background-color: white;
+  opacity: 1;
+}
+.seek_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: white;
+  cursor: pointer;
+  border-radius: 50%;
+}
 
-      tracks.forEach((track) => {
-        const trackElement = createTrackElement(track);
-        tracksContainer.appendChild(trackElement);
-      });
-    }
+.slider_container {
+  position: relative;
+  top: -7.5px;
+}
 
-    function createTrackElement(track) {
-      const trackElement = document.createElement("div");
-      trackElement.className = "track";
+.seek_slider {
+  width: 440px;
+}
+    </style>
+    <div class="player">
+      <div class="player_items">
+        <div class="player_controls">
+          <div class="meta_data">
+            <h3 class="player_song">Song</h3>
+            <h5 class="artist_label"><i class="player_artist">&#8205</i></h5>
+          </div>
+          <div class="control_bar">
+            <a onclick="playpausePlayer()" class="playBtn">
+              <i class="fa-solid fa-play"></i>
+            </a>
+            <div class="slider_container">
+      <div class="times">
+        <div class="current-time">00:00</div>
+        <div> / </div>
+        <div class="total-duration">00:00</div>
+      </div>
+      <input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
+      
+    </div>
+          </div>
+          <div class="control_button"></div>
+        </div>
+        <img class="player_cover" src="/" alt="" />
+      </div>
+    </div>
 
-      const coverImage = document.createElement("img");
-      coverImage.src = track.cover;
-      trackElement.appendChild(coverImage);
+    <!-- partial -->
+    <script src="/js/fetchAndRenderReuse.js"></script>
+    <script src="/js/player.js"></script>
+    <script>
+      const tracks = []
+      const content_container = document.getElementById("content");
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const playlistId = urlParams.get("id");
+      const playlist_name = urlParams.get("name");
+      const playlist_owner = urlParams.get("owner");
 
-      const trackInfo = document.createElement("div");
-      trackInfo.className = "track-info";
+      const playlist_title = document.getElementById("title-name");
+      playlist_title.innerText = playlist_name;
+      const playlist_maker = document.getElementById("owner_name");
+      playlist_maker.innerText = playlist_owner;
 
-      const trackName = document.createElement("div");
-      trackName.className = "track-name";
-      trackName.textContent = track.name;
-      trackInfo.appendChild(trackName);
+      async function getTracks(playlistId) {
+        const TRACKS_API_URL = ` /api/playlist/${playlistId}/tracks`;
+        const tracksContainer = document.getElementById("tracks-container");
+        const loadingElement = document.createElement("div");
+        loadingElement.className = "loading";
+        tracksContainer.appendChild(loadingElement);
 
-      const trackArtist = document.createElement("div");
-      trackArtist.className = "track-artist";
-      trackArtist.textContent = track.artist;
-      trackInfo.appendChild(trackArtist);
+        try {
+          const response = await fetch(TRACKS_API_URL);
+          const tracks = await response.json();
+          renderTracks(tracks);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          tracksContainer.removeChild(loadingElement);
+        }
+      }
 
-      const trackDuration = document.createElement("div");
-      trackDuration.className = "track-duration";
-      trackDuration.textContent = formatDuration(track.duration);
-      trackInfo.appendChild(trackDuration);
+      function renderTracks(tracks) {
+        const tracksContainer = document.getElementById("tracks-container");
 
-      trackElement.appendChild(trackInfo);
+        tracks.forEach((track) => {
+          const trackElement = createTrackElement(track);
+          tracksContainer.appendChild(trackElement);
+          tracks.push(track.name)
+        });
+      }
 
-      return trackElement;
-    }
+      function createTrackElement(track) {
+        const trackElement = document.createElement("div");
 
-    function formatDuration(duration) {
-      const minutes = Math.floor(duration / 60000);
-      const seconds = Math.floor((duration % 60000) / 1000);
-      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-    }
+        trackElement.className = "track";
+        trackElement.onclick = function () {
+          const player_artist = document.querySelector(".player_artist");
+          const player_cover = document.querySelector(".player_cover");
+          const player_song = document.querySelector(".player_song");
 
-    getTracks(playlistId);
-  </script>
+          player_artist.innerText = track.artist;
+          player_cover.src = track.cover;
+          player_song.innerText = track.name;
+
+          loadPlayer(track.name, track.artist, tracks);
+        };
+
+        const coverImage = document.createElement("img");
+        coverImage.src = track.cover;
+        trackElement.appendChild(coverImage);
+
+        const trackInfo = document.createElement("div");
+        trackInfo.className = "track-info";
+
+        const trackName = document.createElement("div");
+        trackName.className = "track-name";
+        trackName.textContent = track.name;
+        trackInfo.appendChild(trackName);
+
+        const trackArtist = document.createElement("div");
+        trackArtist.className = "track-artist";
+        trackArtist.textContent = track.artist;
+        trackInfo.appendChild(trackArtist);
+
+        const trackDuration = document.createElement("div");
+        trackDuration.className = "track-duration";
+        trackDuration.textContent = formatDuration(track.duration);
+        trackInfo.appendChild(trackDuration);
+
+        trackElement.appendChild(trackInfo);
+
+        return trackElement;
+      }
+
+      function formatDuration(duration) {
+        const minutes = Math.floor(duration / 60000);
+        const seconds = Math.floor((duration % 60000) / 1000);
+        return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+      }
+      async function pageLoad() {
+        const playlists = await getPlaylists();
+        getTracks(playlistId);
+        renderSidebar(playlists);
+      }
+      pageLoad();
+    </script>
+  </body>
 </html>

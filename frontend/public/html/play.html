@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Audio Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
+      integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <style>
+    .player {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    }
+    @import url("https://fonts.cdnfonts.com/css/circular-std");
+    body {
+      font-family: "Circular Std", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #eceff4;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .play-btn {
+      width: 75px;
+      height: 75px;
+      border: none;
+      background-color: #f44336;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 24px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .rewind-btn,
+    .fast-forward-btn {
+      width: 50px;
+      height: 50px;
+      border: none;
+      background-color: #e0e0e0;
+      color: #333;
+      border-radius: 50%;
+      font-size: 24px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+  <body>
+    <div class="player">
+      <div class="controls">
+        <button class="rewind-btn">&lt;&lt;</button>
+        <button class="play-btn">play</button>
+        <button class="fast-forward-btn">&gt;&gt;</button>
+      </div>
+      <div class="timer">
+        <span class="current-time">00:00</span> /
+        <span class="total-time">00:00</span>
+      </div>
+    </div>
+  </body>
+  <script>
+    const player = document.querySelector(".player");
+    const playBtn = player.querySelector(".play-btn");
+    const rewindBtn = player.querySelector(".rewind-btn");
+    const fastForwardBtn = player.querySelector(".fast-forward-btn");
+    const currentTimeSpan = player.querySelector(".current-time");
+    const totalTimeSpan = player.querySelector(".total-time");
+    var sound = new Howl({
+      src: [audioUrl],
+      html5: true,
+    });
+
+    let isPlaying = false;
+    const sound = new Howl({
+      src: [audioUrl],
+      html5: true,
+    });
+
+    // toggle play/pause function
+    function togglePlay() {
+      if (isPlaying) {
+        sound.pause();
+      } else {
+        sound.play();
+      }
+      isPlaying = !isPlaying;
+      updatePlayButton();
+    }
+
+    // update play button text
+    function updatePlayButton() {
+      playBtn.textContent = isPlaying ? "pause" : "play";
+    } // format time in MM:SS
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes < 10 ? "0" : ""}${minutes}:${
+        seconds < 10 ? "0" : ""
+      }${seconds}`;
+    }
+
+    // update current time and total time
+    function updateTimes() {
+      const currentTime = sound.seek();
+      const totalTime = sound.duration();
+      currentTimeSpan.textContent = formatTime(currentTime);
+      totalTimeSpan.textContent = formatTime(totalTime);
+    }
+
+    // rewind function
+    function rewind() {
+      const currentTime = sound.seek();
+      sound.seek(Math.max(0, currentTime - 10));
+    }
+
+    // fast forward function
+    function fastForward() {
+      const currentTime = sound.seek();
+      sound.seek(Math.min(sound.duration(), currentTime + 10));
+    }
+
+    // event listeners
+    // event listeners
+    playBtn.addEventListener("click", togglePlay);
+    sound.on("play", () => {
+      isPlaying = true;
+      updatePlayButton();
+    });
+    sound.on("pause", () => {
+      isPlaying = false;
+      updatePlayButton();
+    });
+    function update() {
+      updateTimes();
+      requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
+    sound.on("end", () => {
+      isPlaying = false;
+      updatePlayButton();
+    });
+    rewindBtn.addEventListener("click", rewind);
+    fastForwardBtn.addEventListener("click", fastForward);
+    sound.on("load", () => {
+      updateTimes();
+    });
+
+    // continuously update current time
+    sound.on("timeupdate", () => {
+      updateTimes();
+    });
+  </script>
+</html>

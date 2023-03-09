@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/player.css">
   </head>
   <style>
     @import url("https://fonts.cdnfonts.com/css/circular-std");
@@ -14,6 +16,11 @@
       align-items: center;
       flex-direction: column;
       font-family: "Circular Std", sans-serif;
+      background-color: #eceff4;
+    }
+    #content {
+      margin-left: 200px;
+      margin-right: 100px;
     }
     .user_profile {
       display: flex;
@@ -22,7 +29,7 @@
       flex-direction: column;
     }
     .user_pic {
-      width: 70%;
+      width: 14rem;
       border-radius: 15px;
     }
     .user_playlists {
@@ -47,7 +54,7 @@
       transition: 0.15s;
     }
     .item_container:hover {
-      transform: scale(1.02);
+      transform: scale(1.05);
     }
     .playlist_cover {
       width: 100%;
@@ -61,33 +68,36 @@
       margin-top: 0.25rem;
       font-size: 0.85rem;
     }
+    /* Sidebar Styles */
+    
+      
+    </style>
   </style>
   <body>
+    <div class="sidebar">
+      <ul id="sidebar_items">
+        <li><a style="font-weight: bold; color: white" href="#">Home</a></li>
+        <li><a href="/user/profile">Search</a></li>
+        <li><a href="/library">Library</a></li>
+        <hr />
+      </ul>
+    </div>
+    <div id="content"></div>
+    <script src="/js/fetchAndRenderReuse.js"></script>
     <script>
-      async function getProfile() {
-        const profile_URL = "/api/auth";
-        const response = await fetch(profile_URL);
-        const profile = await response.json();
-        renderProfile(profile);
-      }
+      const content_container = document.getElementById("content");
       async function renderProfile(profile) {
         const user_profile = document.createElement("div");
         user_profile.className = "user_profile";
         const user_pic = document.createElement("img");
         user_pic.src = profile.images[0].url;
         user_pic.className = "user_pic";
-        const user_greeting = document.createElement("h1");
-        user_greeting.className = "user_greeting";
+        const user_greeting = document.createElement("p");
+
         user_greeting.innerText = "Welkom " + profile.display_name + "!";
         user_profile.appendChild(user_pic);
         user_profile.appendChild(user_greeting);
-        document.body.appendChild(user_profile);
-      }
-      async function getPlaylists() {
-        const profile_URL = "/api/playlist";
-        const response = await fetch(profile_URL);
-        const playlists = await response.json();
-        renderPlaylists(playlists);
+        content_container.appendChild(user_profile);
       }
       async function renderPlaylists(playlists) {
         const user_playlists = document.createElement("div");
@@ -107,16 +117,22 @@
           const playlist_owner = document.createElement("p");
           playlist_owner.className = "playlist_owner";
           playlist_owner.innerText = i.playlist.owner.display_name;
-
           playlists_container.appendChild(playlist_cover);
           playlists_container.appendChild(playlist_name);
           playlists_container.appendChild(playlist_owner);
           user_playlists.appendChild(playlists_container);
         });
-        document.body.appendChild(user_playlists);
+        content_container.appendChild(user_playlists);
       }
-      getProfile();
-      getPlaylists();
+
+      async function pageLoad() {
+        const playlists = await getPlaylists();
+        const profile = await getProfile();
+        renderSidebar(playlists);
+        renderProfile(profile);
+        renderPlaylists(playlists);
+      }
+      pageLoad();
     </script>
   </body>
 </html>

@@ -8,4 +8,8 @@ router.get("/profile", authenticate, (req, res) => {
 router.get("/playlists", authenticate, (req, res) => {
   res.sendFile(path.join(html, "playlist.html"));
 });
+
+router.get("/play", (req, res) => {
+  res.sendFile(path.join(html, "play.html"));
+});
 module.exports = router;
