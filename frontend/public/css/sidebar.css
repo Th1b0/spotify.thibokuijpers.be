@@ -5,6 +5,7 @@
         left: 0;
         background-color: black;
         padding: 1rem;
+        width: 200px;
       }
 .sidebar ul {
         list-style: none;

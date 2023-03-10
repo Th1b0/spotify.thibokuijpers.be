@@ -1,10 +1,23 @@
 let curr_track = document.createElement("audio");
-const playBtn = document.querySelector(".playBtn");
+
+let trackList = null;
+async function getTracks() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const playlistId = urlParams.get("id");
+  const TRACKS_API_URL = ` /api/playlist/${playlistId}/tracks`;
+  const response = await fetch(TRACKS_API_URL);
+  const tracks = await response.json();
+  trackList = tracks;
+}
+getTracks();
 let seek_slider = document.querySelector(".seek_slider");
 let volume_slider = document.querySelector(".volume_slider");
 let curr_time = document.querySelector(".current-time");
 let total_duration = document.querySelector(".total-duration");
-let tracksList = [];
+const playBtn = document.querySelector(".playBtn");
+const skipBtn = document.querySelector("skipBtn");
+const rewindBtn = document.querySelector("rewindBtn");
 
 let isPlaying = false;
 let updateTimer;
@@ -26,16 +39,23 @@ function playpausePlayer() {
   else stopPlayer();
 }
 
-function loadPlayer(name, artist, tracks) {
+function loadPlayer(name, artist, cover) {
   clearInterval(updateTimer);
   resetValues();
-  tracksList = tracks;
+
   const searchQuery = `${name} ${artist} lyrics`;
-  curr_track.src = `/music/${searchQuery.replace(/[\\/]/g, "")} lyrics`;
+  curr_track.src = `/music/${searchQuery.replace(/[\\/]/g, "")} audio`;
+  const player_artist = document.querySelector(".player_artist");
+  const player_cover = document.querySelector(".player_cover");
+  const player_song = document.querySelector(".player_song");
+
+  player_artist.innerText = artist;
+  player_cover.src = cover;
+  player_song.innerText = name;
+
   curr_track.load();
   updateTimer = setInterval(seekUpdate, 1000);
-
-  startPlayer();
+  curr_track.addEventListener("canplaythrough", startPlayer);
 }
 function resetValues() {
   curr_time.textContent = "00:00";
@@ -79,4 +99,13 @@ function seekUpdate() {
     curr_time.textContent = currentMinutes + ":" + currentSeconds;
     total_duration.textContent = durationMinutes + ":" + durationSeconds;
   }
+}
+
+async function nextTrack() {
+  const track = trackList[[Math.floor(Math.random() * trackList.length)]];
+  loadPlayer(track.name, track.artist, track.cover);
+}
+async function prevTrack() {
+  const track = trackList[[Math.floor(Math.random() * trackList.length)]];
+  loadPlayer(track.name, track.artist, track.cover);
 }

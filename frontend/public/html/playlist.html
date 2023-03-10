@@ -12,6 +12,7 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/css/sidebar.css" />
+    <link rel="stylesheet" href="/css/player.css">
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
       integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
@@ -26,7 +27,7 @@
         font-family: "Circular Std", sans-serif;
         margin: 0;
         padding: 0;
-        background-color: rgba(0, 0, 0,1.5);
+        background-color: rgba(0, 0, 0, 1.5);
         overflow-x: hidden;
       }
 
@@ -34,19 +35,19 @@
         text-align: center;
         margin-top: 30px;
         color: white;
-        margin-right: 200px;
+        margin-inline: auto;
       }
       p {
         text-align: center;
         color: white;
-        margin-right: 200px;
+        margin-inline: auto;
       }
       .owner_name {
         font-size: 1rem;
-
       }
-      #content {
-        margin-left: 200px;
+       #content {
+        margin-left: 250px;
+        margin-right: 50px;
 
         margin-bottom: 150px;
       }
@@ -135,96 +136,7 @@
       <div id="tracks-container"></div>
     </div>
     <style>
-      body {
-        background-color: #0d0d0d;
-      }
-      .player {
-        background-color: black;
-        color: white;
-        position: fixed;
-        bottom: 0;
-        width: 100vw;
-      }
-      .player_cover {
-        width: 100px;
-        height: 100px;
-      }
-      .player_items {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-block: 15px;
-      }
-      .meta_data {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .player_song {
-        width: 600px;
-        height: 25px;
-        text-align: left;
-        margin: 0;
-      }
-      .artist_label {
-        margin: 0;
-        font-weight: bolder;
-        margin-bottom: 20px;
-      }
-      .player_artist {
-        font-weight: 400;
-        font-style: normal;
-      }
-      .control_bar {
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 4rem;
-      }
-      .playBtn {
-        background-color: black;
-        border: none;
-        font-size: 1.25rem;
-        color: white;
-        margin-inline: 0;
-        width: 25px;
-        
-      }
-
-.times {
-  display: flex;
-}
-.seek_slider {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  height: 5px;
-  background: white;
-  opacity: 0.7;
-}
-.seek_slider::-moz-range-thumb {
-  background-color: white;
-  opacity: 1;
-}
-.seek_slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  background: white;
-  cursor: pointer;
-  border-radius: 50%;
-}
-
-.slider_container {
-  position: relative;
-  top: -7.5px;
-}
-
-.seek_slider {
-  width: 440px;
-}
+      
     </style>
     <div class="player">
       <div class="player_items">
@@ -234,9 +146,13 @@
             <h5 class="artist_label"><i class="player_artist">&#8205</i></h5>
           </div>
           <div class="control_bar">
+            <a onclick="prevTrack()" class="rewindBtn"><i class="fa-solid fa-backward"></i></a>
             <a onclick="playpausePlayer()" class="playBtn">
+              
               <i class="fa-solid fa-play"></i>
+              
             </a>
+            <a onclick="nextTrack()" class="skipBtn"><i class="fa-solid fa-forward"></i></a>
             <div class="slider_container">
       <div class="times">
         <div class="current-time">00:00</div>
@@ -257,7 +173,7 @@
     <script src="/js/fetchAndRenderReuse.js"></script>
     <script src="/js/player.js"></script>
     <script>
-      const tracks = []
+      const tracks = [];
       const content_container = document.getElementById("content");
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
@@ -294,7 +210,7 @@
         tracks.forEach((track) => {
           const trackElement = createTrackElement(track);
           tracksContainer.appendChild(trackElement);
-          tracks.push(track.name)
+          tracks.push(track.name);
         });
       }
 

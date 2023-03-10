@@ -1,112 +1,108 @@
-.container {
-  width: 100vw;
-  margin: 30px auto;
-}
+      body {
+        background-color: #0d0d0d;
+      }
+      .player {
+        background-color: black;
+        color: white;
+        position: fixed;
+        bottom: 0;
+        width: 100vw;
+      }
+      .player_cover {
+        width: 100px;
+        height: 100px;
+      }
+      .player_items {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-block: 15px;
+      }
+      .meta_data {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .player_song {
+        width: 600px;
+        height: 25px;
+        text-align: left;
+        margin: 0;
+        font-size: 20.5px;
+      }
+      .artist_label {
+        margin: 0;
+        font-weight: bolder;
+        margin-bottom: 20px;
+      }
+      .player_artist {
+        font-weight: 400;
+        font-style: normal;
+      }
+      .control_bar {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+          display: flex;
+  align-items: center;
+  color: white;
+      }
+      .playBtn {
+        width: 15px;
+      }
+      .control_bar > a {
+        color: white;
+        font-size: 1.25rem;
+      }
 
-.mejs__container {
-  margin-top: 10px;
-  width: 80%;
-}
-.mejs__controls {
-  display: block;
-  width: 50vw;
-}
-.mejs__controls, .mejs__container {
-  background: none !important;
-}
-.mejs__time {
-  color: #777;
-  font-weight: normal;
-}
 
-.podcast {
-  background: #f0f0f0;
-  padding: 30px;
-  border-radius: 3px;
-}
-.podcast__episode_title {
-  font-size: 28px;
-  font-weight: bold;
-  line-height: 1.5;
-  margin-bottom: 0;
-  padding-bottom: 0;
-  margin-top: 0;
-  color: #333;
-}
-.podcast__title {
-  margin-top: 10px;
-  text-transform: uppercase;
-  font-size: 11px;
-  color: #555;
-}
-.podcast__title i {
-  font-style: normal;
-  font-weight: normal;
-  text-transform: capitalize;
-  margin-left: 10px;
-}
-.podcast__meta {
-  background: #ddd;
-  margin: 40px -30px -30px -30px;
-  padding: 0 30px 30px 30px;
-  display: flex;
-  justify-content: space-between;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.podcast__meta .artwork {
-  margin-right: 0;
-  transform: translateY(-70px);
-}
-.podcast__meta .artwork > img {
-  border-radius: 3px;
-  width: 150px;
-  height: 150px;
-  box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.1);
-  margin-bottom: -80px;
-}
-
-.mejs-prepended-buttons {
+.times {
   display: flex;
 }
-
-.mejs-appended-buttons {
-  display: flex;
-  justify-content: space-evenly;
+.seek_slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: white;
+  opacity: 0.7;
+}
+.seek_slider::-moz-range-thumb {
+  background-color: white;
+  opacity: 1;
+}
+.seek_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: white;
+  cursor: pointer;
+  border-radius: 50%;
 }
 
-.mejs__play > button {
-  background: transparent url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/mediaplayer-sprite-gray.svg") no-repeat;
+.slider_container {
+  position: relative;
+  top: -10px;
 }
 
-.mejs__pause > button {
-  background: transparent url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/mediaplayer-sprite-gray.svg") no-repeat;
-  background-position: -20px 0;
+.seek_slider {
+  width: 410px;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-.mejs__mute > button {
-  background: transparent url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/mediaplayer-sprite-gray.svg") no-repeat;
-  background-position: -60px 0;
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ccc;
 }
 
-.mejs__unmute > button {
-  background: transparent url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/mediaplayer-sprite-gray.svg") no-repeat;
-  background-position: -40px 0;
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: #0d0d0d;
 }
 
-.mejs-skip-back-button > button,
-.mejs__skip-back-button > button {
-  background: transparent url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/skipback.svg");
-}
-
-.mejs-jump-forward-button > button, .mejs__jump-forward-button > button {
-  background: url("https://cdn.jsdelivr.net/gh/ivorpad/images-src/jumpforward.svg") no-repeat;
-}
-
-.mejs__button > button {
-  color: #555;
-}
-
-.mejs__horizontal-volume-slider {
-  display: none !important;
-}/*# sourceMappingURL=player.css.map */
